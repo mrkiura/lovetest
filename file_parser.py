@@ -7,14 +7,14 @@ from pathlib import Path
 def parse_tests(
     filename: str,
     source: str = None,
-) -> defaultdict[str, set]:
+) -> defaultdict[str, list]:
     """
     Parse test functions from a given source file.
 
     Reads the source code from the given filename or directly
     from the provided source string, parses the AST, and extracts all the
-    function names that start with "test". It returns a dictionary with
-    function names and their corresponding AST nodes.
+    function names that start with "test". It returns a dictionary whose values are
+    function names and AST nodes.
 
     Usage:
 
