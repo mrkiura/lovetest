@@ -6,14 +6,7 @@ import time
 
 
 def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
-    """Run the test functions defined in a file.
-
-    Args:
-        test_file_name (str): Name of file
-
-    Returns:
-        Tuple[Dict, Counter, Dict]: _description_
-    """
+    """Run the test functions defined in a file."""
     with open(test_file_name, "r") as test_file:
         source = test_file.read()
 
@@ -57,15 +50,7 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
 
 
 def run_test_files(test_files: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
-    """Run the test files provided and return a report as a dict.
-
-    Args:
-        test_files (list[str]): _description_
-
-    Returns:
-        dict[str, Tuple[dict, Counter, dict]]: _description_
-
-    """
+    """Run the test files provided and return a report as a dict."""
     report = dict()
 
     for test_file_name in test_files:
