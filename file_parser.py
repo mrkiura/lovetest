@@ -32,20 +32,18 @@ def parse_tests(
         A default dict with two keys: 'function_names' and 'nodes'
     """
 
-    if not source:
-        if Path(f"{filename}").exists():
+    function_names = []
+    try:
+        if not source:
             with open(filename, "r") as file:
                 source = file.read()
-        else:
-            raise FileNotFoundError("File does not exist")
-
+    except FileNotFoundError:
+        raise
     tree = ast.parse(source, filename=filename)
-    parse_results = defaultdict(list)
 
     for node in ast.walk(tree):
         match node:
             case ast.FunctionDef(name=name) if name.startswith("test"):
-                parse_results["function_names"].append(name)
+                function_names.append(name)
 
-    parse_results["nodes"] = tree.body
-    return parse_results
+    return function_names, tree.body
