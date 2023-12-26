@@ -3,7 +3,7 @@ from typing import Dict
 
 
 def print_results(report: Dict) -> None:
-    print("Running Tests...\n")
+    print("Test results.\n")
 
     summary = Counter()
     for test_file, (results, counter, errors, failures) in report.items():
