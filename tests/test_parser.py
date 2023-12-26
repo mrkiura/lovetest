@@ -1,6 +1,7 @@
 import ast
-import pytest
 from unittest.mock import mock_open, patch
+from utils import assert_raises
+
 from file_parser import parse_tests
 
 
@@ -43,7 +44,6 @@ def test_parse_tests_from_file():
         # assert [in] in nodes
 
 
-def test_parse_tests_file_not_found():
-    with patch("pathlib.Path.exists", return_value=False):
-        with pytest.raises(FileNotFoundError):
-            parse_tests(filename=MOCK_FILE_PATH)
+def test_parse_tests_file_not_found_raises():
+    with assert_raises(FileNotFoundError):
+        parse_tests(filename="temp_file_name")

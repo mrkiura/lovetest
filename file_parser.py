@@ -33,13 +33,12 @@ def parse_tests(
     """
 
     function_names = []
-    if not source:
-        if Path(f"{filename}").exists():
+    try:
+        if not source:
             with open(filename, "r") as file:
                 source = file.read()
-        else:
-            raise FileNotFoundError("File does not exist")
-
+    except FileNotFoundError:
+        raise
     tree = ast.parse(source, filename=filename)
 
     for node in ast.walk(tree):
