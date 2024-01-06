@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-
+import os
 from collector import find_test_files
 from runner import run_test_files
 from reporter import print_results
