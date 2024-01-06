@@ -3,7 +3,7 @@ import glob
 from typing import List
 
 
-def find_test_files(*files) -> List[str]:
+def find_test_files(*files, ignore=None) -> List[str]:
     """
     Find test files in the project directory.
 
@@ -42,4 +42,13 @@ def find_test_files(*files) -> List[str]:
     if not test_files:
         raise FileNotFoundError("No files matched any of the given patterns.")
 
-    return test_files
+    if not ignore:
+        return test_files
+
+    else:
+        wanted = []
+        for unwanted_file in ignore:
+            for file in test_files:
+                if not file.endswith(unwanted_file):
+                    wanted.append(file)
+        return wanted
