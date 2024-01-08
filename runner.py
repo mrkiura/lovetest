@@ -21,10 +21,11 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
     return execute_functions(function_names, global_context)
 
 
-def run_test_files(test_files: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
+def run_test_files(test_file_names: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
     """Run the test files provided and return a report as a dict."""
     return {
-        test_file_name: run_test_file(test_file_name) for test_file_name in test_files
+        test_file_name: run_test_file(test_file_name)
+        for test_file_name in test_file_names
     }
 
 
