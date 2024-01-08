@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-
+import os
 from collector import find_test_files
 from runner import run_test_files
 from reporter import print_results
@@ -30,10 +30,16 @@ if __name__ == "__main__":
             print_results(report)
 
         case {"skip_files": list(files)} if len(files) > 0:
-            print(f"files {files}")
+            verified_files = find_test_files(ignore=files)
+            report = run_test_files(verified_files)
+            print_results(report)
         case {"functions": list(functions)} if len(functions) > 0:
             print(f"functions {functions}")
+            functions = []
+
         case {"skip_functions": list(functions)} if len(functions) > 0:
             print(f"functions {functions}")
         case _:  # default, run all tests.
-            print("No args, running all tests")
+            verified_files = find_test_files()
+            report = run_test_files(verified_files)
+            print_results(report)

@@ -1,6 +1,6 @@
 import ast
 import traceback
-from typing import Tuple, Counter
+from typing import Tuple, Counter, List
 from file_parser import parse_tests
 import time
 
@@ -10,10 +10,6 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
     with open(test_file_name, "r") as test_file:
         source = test_file.read()
 
-    results = {}
-    counter = Counter()
-    errors = {}
-    failures = {}
     global_context = {}
 
     function_names, nodes = parse_tests(source=source, filename=test_file_name)
@@ -22,10 +18,29 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
     code = compile(source=module, filename=test_file_name, mode="exec")
     exec(code, global_context)
 
+    return execute_functions(function_names, global_context)
+
+
+def run_test_files(test_file_names: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
+    """Run the test files provided and return a report as a dict."""
+    return {
+        test_file_name: run_test_file(test_file_name)
+        for test_file_name in test_file_names
+    }
+
+
+def execute_functions(
+    function_names: List[str], execution_context: dict
+) -> Tuple[dict, Counter, dict, dict]:
+    results = {}
+    counter = Counter()
+    errors = {}
+    failures = {}
+
     for function in function_names:
         try:
             start_time = time.time()
-            exec(f"{function}()", global_context)
+            exec(f"{function}()", execution_context)
             end_time = time.time()
             elapsed_time = end_time - start_time
             results[function] = "PASS"
@@ -47,13 +62,3 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
             counter["ELAPSED"] += elapsed_time
 
     return results, counter, errors, failures
-
-
-def run_test_files(test_files: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
-    """Run the test files provided and return a report as a dict."""
-    report = dict()
-
-    for test_file_name in test_files:
-        report[test_file_name] = run_test_file(test_file_name)
-
-    return report

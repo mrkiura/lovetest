@@ -27,7 +27,9 @@ def test_parse_tests_with_source_string():
     assert "test_func_one" in function_names
     assert "test_func_two" in function_names
     assert len(function_names) == 2
-    assert any(isinstance(node, ast.FunctionDef) for node in nodes), "No function defined"
+    assert any(
+        isinstance(node, ast.FunctionDef) for node in nodes
+    ), "No function defined"
 
 
 def test_parse_tests_from_file():
@@ -40,7 +42,9 @@ def test_parse_tests_from_file():
         assert "test_func_one" in function_names
         assert "test_func_two" in function_names
         assert len(function_names) == 2
-        assert any(isinstance(node, ast.FunctionDef) for node in nodes), "No function defined"
+        assert any(
+            isinstance(node, ast.FunctionDef) for node in nodes
+        ), "No function defined"
         # assert [in] in nodes
 
 

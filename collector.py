@@ -3,7 +3,7 @@ import glob
 from typing import List
 
 
-def find_test_files(*files) -> List[str]:
+def find_test_files(*files, ignore=None) -> List[str]:
     """
     Find test files in the project directory.
 
@@ -30,7 +30,12 @@ def find_test_files(*files) -> List[str]:
         >>> ['tests/test_api_core.py', 'tests/test_api_utils.py']
     """
 
-    test_files = []
+    test_files, ignore_files = [], []
+
+    if ignore:
+        for ignore_file in ignore:
+            matches = glob.glob(f"**/{ignore_file}", recursive=True)
+            ignore_files.extend(matches)
 
     if files:
         for file in files:
@@ -42,4 +47,13 @@ def find_test_files(*files) -> List[str]:
     if not test_files:
         raise FileNotFoundError("No files matched any of the given patterns.")
 
-    return test_files
+    if not ignore:
+        return test_files
+
+    # else:
+    #     wanted = []
+    #     for unwanted_file in ignore:
+    #         for file in test_files:
+    #             if not file.endswith(unwanted_file):
+    #                 wanted.append(file)
+    #     return wanted
