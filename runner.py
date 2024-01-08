@@ -23,15 +23,14 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
 
 def run_test_files(test_files: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
     """Run the test files provided and return a report as a dict."""
-    report = dict()
-
-    for test_file_name in test_files:
-        report[test_file_name] = run_test_file(test_file_name)
-
-    return report
+    return {
+        test_file_name: run_test_file(test_file_name) for test_file_name in test_files
+    }
 
 
-def execute_functions(function_names: List[str], execution_context: dict) -> Tuple[dict, Counter, dict, dict]:
+def execute_functions(
+    function_names: List[str], execution_context: dict
+) -> Tuple[dict, Counter, dict, dict]:
     results = {}
     counter = Counter()
     errors = {}

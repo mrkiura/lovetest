@@ -3,7 +3,6 @@ import glob
 from typing import List
 
 
-
 def find_test_files(*files, ignore=None) -> List[str]:
     """
     Find test files in the project directory.
@@ -50,8 +49,6 @@ def find_test_files(*files, ignore=None) -> List[str]:
 
     if not ignore:
         return test_files
-
-
 
     # else:
     #     wanted = []
