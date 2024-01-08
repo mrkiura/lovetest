@@ -35,6 +35,8 @@ if __name__ == "__main__":
             print_results(report)
         case {"functions": list(functions)} if len(functions) > 0:
             print(f"functions {functions}")
+            functions = []
+
         case {"skip_functions": list(functions)} if len(functions) > 0:
             print(f"functions {functions}")
         case _:  # default, run all tests.
