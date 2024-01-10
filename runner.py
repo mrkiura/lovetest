@@ -1,8 +1,9 @@
 import ast
 import traceback
-from typing import Tuple, Counter, List
-from file_parser import parse_tests
 
+from typing import Tuple, Counter
+
+from file_parser import parse_tests
 
 
 def get_function_objects(test_file_name: str, functions=None) -> Tuple[dict, Counter, dict]:
