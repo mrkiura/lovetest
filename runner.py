@@ -2,11 +2,18 @@ import ast
 import traceback
 from typing import Tuple, Counter, List
 from file_parser import parse_tests
-import time
 
 
-def run_test_file(test_file_name: str, functions=None) -> Tuple[dict, Counter, dict]:
-    """Run the test functions defined in a file."""
+
+def get_function_objects(test_file_name: str, functions=None) -> Tuple[dict, Counter, dict]:
+    """
+    Get the function objects from the test file and return them as a dictionary.
+    Args:
+        test_file_name (str): The name of the test file.
+        functions (Optional): Optional argument for functions. Defaults to None.
+    Returns:
+        Tuple[dict, Counter, dict]: A tuple containing the function objects, counter, and errors.
+    """
     with open(test_file_name, "r") as test_file:
         source = test_file.read()
 
@@ -18,47 +25,38 @@ def run_test_file(test_file_name: str, functions=None) -> Tuple[dict, Counter, d
     code = compile(source=module, filename=test_file_name, mode="exec")
     exec(code, global_context)
 
-    return execute_functions(function_names, global_context)
+    func_objects = {func_name: global_context[func_name] for func_name in function_names}
+
+    return func_objects
 
 
-def run_test_files(test_file_names: list[str], functions=None) -> dict[str, Tuple[dict, Counter, dict]]:
-    """Run the test files provided and return a report as a dict."""
-    return {
-        test_file_name: run_test_file(test_file_name, functions)
-        for test_file_name in test_file_names
-    }
-
-
-def execute_functions(
-    function_names: List[str], execution_context: dict
-) -> Tuple[dict, Counter, dict, dict]:
+def run_all_tests(modules: dict):
     results = {}
-    counter = Counter()
     errors = {}
-    failures = {}
+    for file_name, functions in modules.items():
+        counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL"]})
+        for func_name, func in functions.items():
+            try:
+                func()
+                counter["PASS"] += 1
+            except AssertionError:
+                errors[func_name] = traceback.format_exc()
+                counter["FAIL"] += 1
+            except Exception:
+                errors[func_name] = traceback.format_exc()
+                counter["ERROR"] += 1
+        results[file_name] = counter
 
-    for function in function_names:
-        try:
-            start_time = time.time()
-            exec(f"{function}()", execution_context)
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            results[function] = "PASS"
-            counter["PASS"] += 1
-        except AssertionError:
-            error_message = traceback.format_exc()
-            results[function] = "FAIL"
-            counter["FAIL"] += 1
-            failures[function] = error_message
-        except Exception:
-            error_message = traceback.format_exc()
-            results[function] = f"ERROR: {error_message}"
-            errors[function] = error_message
-            counter["ERROR"] += 1
+    return results, errors
 
-        finally:
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            counter["ELAPSED"] += elapsed_time
 
-    return results, counter, errors, failures
+def run_test_files(file_names: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
+    """Run the test files provided and return a report as a dict."""
+
+    modules = {file_name: get_function_objects(file_name) for file_name in file_names}
+
+    results, errors = run_all_tests(modules)
+    return {
+        "results": results,
+        "errors": errors
+    }
