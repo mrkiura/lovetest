@@ -34,7 +34,7 @@ if __name__ == "__main__":
             print_results(report)
         case {"functions": list(functions)} if len(functions) > 0:
             verified_files = find_test_files()
-            report = run_test_files(verified_files)
+            report = run_test_files(verified_files, functions=functions)
             print_results(report)
         case {"skip_functions": list(functions)} if len(functions) > 0:
             verified_files = find_test_files()

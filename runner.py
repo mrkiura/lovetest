@@ -5,7 +5,7 @@ from file_parser import parse_tests
 import time
 
 
-def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
+def run_test_file(test_file_name: str, functions=None) -> Tuple[dict, Counter, dict]:
     """Run the test functions defined in a file."""
     with open(test_file_name, "r") as test_file:
         source = test_file.read()
@@ -21,10 +21,10 @@ def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
     return execute_functions(function_names, global_context)
 
 
-def run_test_files(test_file_names: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
+def run_test_files(test_file_names: list[str], functions=None) -> dict[str, Tuple[dict, Counter, dict]]:
     """Run the test files provided and return a report as a dict."""
     return {
-        test_file_name: run_test_file(test_file_name)
+        test_file_name: run_test_file(test_file_name, functions)
         for test_file_name in test_file_names
     }
 

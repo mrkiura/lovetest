@@ -1,3 +1,7 @@
+from collections import Counter
+import traceback
+
+
 class assert_raises:
     """
     A context manager to assert that a specific exception is raised.
@@ -23,3 +27,76 @@ class assert_raises:
     def __exit__(self, exc_type, exc_value, exc_tb):
         assert exc_type == self.exception_type, "No expected Exceptions raised."
         return True
+
+
+def func():
+    assert True
+
+
+def func2():
+    raise AssertionError("Oops")
+
+
+def func3():
+    raise ValueError("Oops")
+
+
+modules = {
+    "test_parser.py": {
+        "test_parse_tests_from_file": func2,
+        "test_parse_tests_with_source_string": func
+    },
+    "test_reporter.py": {
+        "test_empty_report": func,
+        "test_all_passing": func2,
+        "test_mixed_results": func3,
+        "test_no_passing_tests": func3
+    }
+}
+
+
+def run_all_tests(modules):
+    results = {}
+    errors = {}
+    for file_name, functions in modules.items():
+        counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL"]})
+        for func_name, func in functions.items():
+            try:
+                func()
+                counter["PASS"] += 1
+            except AssertionError:
+                errors[func_name] = traceback.format_exc()
+                counter["FAIL"] += 1
+            except Exception:
+                errors[func_name] = traceback.format_exc()
+                counter["ERROR"] += 1
+        results[file_name] = counter
+
+    return results, errors
+
+
+results, errors = run_all_tests(modules)
+
+print(f"results: {results}")
+
+for func_name, error in errors.items():
+    print("*"*len(func_name))
+    print(func_name)
+    print(error)
+
+
+async def run_async_tests(modules):
+    results = {}
+    for file_name, functions in modules.items():
+        counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL"]})
+        for func_name, func in functions.items():
+            try:
+                await func()
+                counter["PASS"] += 1
+            except AssertionError:
+                counter["FAIL"] += 1
+            except Exception:
+                counter["ERROR"] += 1
+        results[file_name] = counter
+
+    return results
