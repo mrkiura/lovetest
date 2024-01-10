@@ -5,15 +5,10 @@ from typing import Dict
 def print_results(report: Dict) -> None:
     print("Test results.\n")
 
-    summary = Counter()
-    for test_file, (results, counter, errors, failures) in report.items():
+    for test_file, counter in report["results"].items():
         print("\n" + "=" * 70)
         print(f"{test_file}")
         print("=" * 70)
-        summary["PASS"] += counter["PASS"]
-        summary["FAIL"] += counter["FAIL"]
-        summary["ERROR"] += counter["ERROR"]
-        summary["ELAPSED"] += counter["ELAPSED"]
         for test_name, test_result in results.items():
             summary["COUNT"] += 1
             if "FAIL" in test_result:
