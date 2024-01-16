@@ -63,3 +63,8 @@ def test_no_passing_tests():
     assert "test_fail_01 ... FAIL" in result
     assert "test_error_01 ... ERROR" in result
     assert "test_pass_01 ... OK" not in result
+
+
+def test_assert_fail():
+    name = 20
+    raise AssertionError("Big L")
