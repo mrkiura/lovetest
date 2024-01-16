@@ -58,14 +58,14 @@ def func3():
 
 modules = {
     "test_parser.py": {
-        "test_parse_tests_from_file": func2,
+        "test_parse_tests_from_file": func,
         "test_parse_tests_with_source_string": func
     },
     "test_reporter.py": {
         "test_empty_report": func,
-        "test_all_passing": func2,
-        "test_mixed_results": func3,
-        "test_no_passing_tests": func3
+        "test_all_passing": func,
+        "test_mixed_results": func,
+        "test_no_passing_tests": func
     }
 }
 
@@ -90,14 +90,14 @@ def run_all_tests(modules):
     return results, errors
 
 
-results, errors = run_all_tests(modules)
+# results, errors = run_all_tests(modules)
 
-print(f"results: {results}")
+# print(f"results: {results}")
 
-for func_name, error in errors.items():
-    print("*"*len(func_name))
-    print(func_name)
-    print(error)
+# for func_name, error in errors.items():
+#     print("*"*len(func_name))
+#     print(func_name)
+#     print(error)
 
 
 # async def run_async_tests(modules):

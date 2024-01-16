@@ -1,6 +1,6 @@
 import ast
 import traceback
-
+import time
 from typing import Tuple, Counter
 
 from file_parser import parse_tests
@@ -33,12 +33,18 @@ def get_function_objects(test_file_name: str, functions=None) -> Tuple[dict, Cou
 
 def run_all_tests(modules: dict):
     results = {}
+    counter = Counter()
     errors = {}
+    failures = {}
+
     for file_name, functions in modules.items():
         counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL"]})
         for func_name, func in functions.items():
             try:
+                start_time = time.time()
                 func()
+                counter["PASS"] += 1
+                results[func_name] = "PASS"
                 counter["PASS"] += 1
             except AssertionError:
                 errors[func_name] = traceback.format_exc()
@@ -46,9 +52,12 @@ def run_all_tests(modules: dict):
             except Exception:
                 errors[func_name] = traceback.format_exc()
                 counter["ERROR"] += 1
-        results[file_name] = counter
+            finally:
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                counter["ELAPSED"] += elapsed_time
 
-    return results, errors
+    return results, counter, errors, failures
 
 
 def run_test_files(file_names: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:

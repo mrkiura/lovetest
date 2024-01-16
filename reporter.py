@@ -5,6 +5,7 @@ from typing import Dict
 def print_results(report: Dict) -> None:
     print("Running Tests...\n")
 
+    print(f"Received report {report}")
     summary = Counter()
     for file_name, (results, counter, errors, failures) in report.items():
         print("\n" + "=" * 70)
