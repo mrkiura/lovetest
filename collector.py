@@ -49,11 +49,3 @@ def find_test_files(*files, ignore=None) -> List[str]:
 
     if not ignore:
         return test_files
-
-    # else:
-    #     wanted = []
-    #     for unwanted_file in ignore:
-    #         for file in test_files:
-    #             if not file.endswith(unwanted_file):
-    #                 wanted.append(file)
-    #     return wanted
