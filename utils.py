@@ -100,18 +100,18 @@ for func_name, error in errors.items():
     print(error)
 
 
-async def run_async_tests(modules):
-    results = {}
-    for file_name, functions in modules.items():
-        counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL"]})
-        for func_name, func in functions.items():
-            try:
-                await func()
-                counter["PASS"] += 1
-            except AssertionError:
-                counter["FAIL"] += 1
-            except Exception:
-                counter["ERROR"] += 1
-        results[file_name] = counter
+# async def run_async_tests(modules):
+#     results = {}
+#     for file_name, functions in modules.items():
+#         counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL"]})
+#         for func_name, func in functions.items():
+#             try:
+#                 await func()
+#                 counter["PASS"] += 1
+#             except AssertionError:
+#                 counter["FAIL"] += 1
+#             except Exception:
+#                 counter["ERROR"] += 1
+#         results[file_name] = counter
 
-    return results
+#     return results

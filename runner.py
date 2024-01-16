@@ -13,7 +13,7 @@ def get_function_objects(test_file_name: str, functions=None) -> Tuple[dict, Cou
         test_file_name (str): The name of the test file.
         functions (Optional): Optional argument for functions. Defaults to None.
     Returns:
-        Tuple[dict, Counter, dict]: A tuple containing the function objects, counter, and errors.
+        func_objects (Dict[str, object]): A dictionary containing function names and function objects.
     """
     with open(test_file_name, "r") as test_file:
         source = test_file.read()
