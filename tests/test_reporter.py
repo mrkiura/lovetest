@@ -3,6 +3,7 @@ import io
 import sys
 
 from reporter import print_results
+from runner import run_tests
 
 
 def capture_print_output(func, *args, **kwargs):
