@@ -42,3 +42,10 @@ def ast_to_func(node):
     context = {}
     exec(code_obj, context)
     return context[node.name]
+
+
+def get_source(filename: str) -> str:
+    with open(filename, "r") as file:
+        source = file.read()
+    return source
+

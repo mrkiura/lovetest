@@ -4,10 +4,10 @@ import traceback
 from collections import defaultdict
 from typing import Counter, Callable, List
 
-from file_parser import parse_tests
+from file_parser import parse_files
 
 
-def get_function_objects(test_file_name: str, functions=None) -> List[Callable]:
+def find_functions(test_file_name: str, functions=None) -> List[Callable]:
     """
     Get the function objects from the test file and return them as a dictionary.
     Args:
@@ -21,7 +21,7 @@ def get_function_objects(test_file_name: str, functions=None) -> List[Callable]:
 
     global_context = {}
 
-    function_names, nodes = parse_tests(source=source, filename=test_file_name)
+    function_names, nodes = parse_files(source=source, filename=test_file_name)
 
     module = ast.Module(body=nodes)
     code = compile(source=module, filename=test_file_name, mode="exec")
@@ -32,10 +32,8 @@ def get_function_objects(test_file_name: str, functions=None) -> List[Callable]:
     return func_objects
 
 
-def run_tests(file_names: list[str]):
-    """Execute the functions in every file from file names and report."""
-
-    modules = {file_name: get_function_objects(file_name) for file_name in file_names}
+def run_tests(modules):
+    """Execute the functions in every file from modules and report."""
 
     results = defaultdict(dict)
     failures = defaultdict(dict)
@@ -51,13 +49,15 @@ def run_tests(file_names: list[str]):
             except AssertionError:
                 tb_str = traceback.format_exc()
                 results[file_name][function_name] = "FAIL"
-                failures[file_name][function_name] =  tb_str
+                failures[file_name][function_name] = tb_str
                 counter["FAIL"] += 1
             except Exception as e:
-                tb_str = "".join(traceback.format_exception(type(e), e, e.__traceback__))
-                tb_str = tb_str[tb_str.find("\n")+1:]
+                tb_str = "".join(
+                    traceback.format_exception(type(e), e, e.__traceback__)
+                )
+                tb_str = tb_str[tb_str.find("\n") + 1 :]
                 results[file_name][function_name] = "ERROR"
-                errors[file_name][function_name] =  tb_str
+                errors[file_name][function_name] = tb_str
                 counter["ERROR"] += 1
             else:
                 counter["PASS"] += 1
@@ -68,5 +68,5 @@ def run_tests(file_names: list[str]):
         "results": results,
         "counter": counter,
         "errors": errors,
-        "failures": failures
+        "failures": failures,
     }

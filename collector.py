@@ -1,6 +1,7 @@
 import glob
+import ast
 
-from typing import List
+from typing import List, Dict
 
 
 def find_test_files(*files, ignore=None) -> List[str]:
@@ -47,5 +48,8 @@ def find_test_files(*files, ignore=None) -> List[str]:
     if not test_files:
         raise FileNotFoundError("No files matched any of the given patterns.")
 
-    if not ignore:
-        return test_files
+    return test_files
+
+
+
+

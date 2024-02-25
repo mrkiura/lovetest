@@ -24,18 +24,19 @@ def print_results(report: Dict) -> None:
 
         for test_name, error_message in report["errors"][file_name].items():
             print(
-                f"\n{test_name}\n----------------------------------------------------------------------"
+                f"\nERROR: {test_name}\n----------------------------------------------------------------------"
             )
             print(f"{error_message}\n")
 
         for test_name, error_message in report["failures"][file_name].items():
             print(
-                f"\n{test_name}\n----------------------------------------------------------------------"
+                f"\nFAIL: {test_name}\n----------------------------------------------------------------------"
             )
             print(f"{error_message}\n")
 
-    print("PASSED (passed=" + str(results["counter"]["PASSED"]) + ")")
-    print("FAILED (failures=" + str(results["counter"]["FAILED"]) + ")")
+    print("PASS: " + str(report["counter"]["PASS"]))
+    print("FAIL: " + str(report["counter"]["FAIL"]))
+    print("ERROR: " + str(report["counter"]["ERROR"]))
 
 
 # Sample results:

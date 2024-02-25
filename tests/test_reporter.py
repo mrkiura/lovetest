@@ -3,6 +3,8 @@ import io
 import sys
 
 from reporter import print_results
+from unittest.mock import mock_open, patch
+from file_parser import find_functions_in_files
 from runner import run_tests
 
 
@@ -23,49 +25,68 @@ def test_empty_report():
 
 
 def test_all_passing():
-    report = {
-        "test_file_01": (
-            {"test_pass_01": "PASS"},
-            Counter({"PASS": 1, "FAIL": 0, "ERROR": 0, "ELAPSED": 0.1}),
-            {},
-            {},
-        )
-    }
-    result = capture_print_output(print_results, report)
-    assert "test_pass_01 ... OK" in result
+    source = """
+def test_pass_1():
+    assert True
+
+def test_pass_2():
+    assert True
+    """
+    m = mock_open(read_data=source)
+
+    with patch("builtins.open", m), patch("pathlib.Path.exists", return_value=True):
+        modules = find_functions_in_files(["test_01"])
+        report = run_tests(modules)
+        result = capture_print_output(print_results, report)
+        assert "test_pass_1 ... OK" in result
 
 
 def test_mixed_results():
-    report = {
-        "test_file_01": (
-            {"test_pass_01": "PASS", "test_fail_01": "FAIL", "test_error_01": "ERROR"},
-            Counter({"PASS": 1, "FAIL": 1, "ERROR": 1, "ELAPSED": 0.3}),
-            {"test_error_01": "An error occurred."},
-            {"test_fail_01": "AssertionError"},
-        )
-    }
-    result = capture_print_output(print_results, report)
-    assert "test_fail_01 ... FAIL" in result
-    assert "test_error_01 ... ERROR" in result
-    assert "ERROR: test_error_01" in result
-    assert "FAIL: test_fail_01" in result
+    source = """
+def test_fail():
+    raise AssertionError()
+
+def test_error():
+    raise Exception()
+
+def test_pass():
+    assert True
+    """
+    m = mock_open(read_data=source)
+
+    with patch("builtins.open", m), patch("pathlib.Path.exists", return_value=True):
+        modules = find_functions_in_files(["test_01"])
+        report = run_tests(modules)
+        result = capture_print_output(print_results, report)
+        assert "test_fail ... FAIL" in result
+        assert "test_error ... ERROR" in result
+        assert "test_pass ... OK" in result
+        assert "ERROR: test_error" in result
+        assert "FAIL: test_fail" in result
 
 
 def test_no_passing_tests():
-    report = {
-        "test_file_01": (
-            {"test_fail_01": "FAIL", "test_error_01": "ERROR"},
-            Counter({"PASS": 0, "FAIL": 1, "ERROR": 1, "ELAPSED": 0.2}),
-            {"test_error_01": "An error occurred."},
-            {"test_fail_01": "AssertionError"},
-        )
-    }
-    result = capture_print_output(print_results, report)
-    assert "test_fail_01 ... FAIL" in result
-    assert "test_error_01 ... ERROR" in result
-    assert "test_pass_01 ... OK" not in result
+    source = """
+def test_fail():
+    raise AssertionError()
+
+def test_error():
+    raise Exception()
+    """
+    m = mock_open(read_data=source)
+
+    with patch("builtins.open", m), patch("pathlib.Path.exists", return_value=True):
+        modules = find_functions_in_files(["test_01"])
+        report = run_tests(modules)
+        result = capture_print_output(print_results, report)
+        assert "test_fail ... FAIL" in result
+        assert "test_error ... ERROR" in result
+        assert "ERROR: test_error" in result
+        assert "FAIL: test_fail" in result
+
+def test_stress():
+    raise Exception()
 
 
-def test_assert_fail():
-    name = 20
-    raise AssertionError("Big L")
+def test_stress222():
+    raise AssertionError()
