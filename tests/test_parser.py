@@ -22,7 +22,7 @@ MOCK_FILE_PATH = "path/to/tests/test_file.py"
 def test_parse_tests_with_source_string():
     source = MOCK_SOURCE_CODE
 
-    function_names, nodes = parse_files(filename="test.py", source=source)
+    function_names, nodes = parse_files(file_name="test.py", source=source)
 
     assert "test_func_one" in function_names
     assert "test_func_two" in function_names
@@ -36,7 +36,7 @@ def test_parse_tests_from_file():
     m = mock_open(read_data=MOCK_SOURCE_CODE)
 
     with patch("builtins.open", m), patch("pathlib.Path.exists", return_value=True):
-        function_names, nodes = parse_files(filename=MOCK_FILE_PATH)
+        function_names, nodes = parse_files(file_name=MOCK_FILE_PATH)
 
         m.assert_called_once_with(MOCK_FILE_PATH, "r")
         assert "test_func_one" in function_names
@@ -50,4 +50,4 @@ def test_parse_tests_from_file():
 
 def test_parse_tests_file_not_found_raises():
     with assert_raises(FileNotFoundError):
-        parse_files(filename="temp_file_name")
+        parse_files(file_name="temp_file_name")

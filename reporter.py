@@ -36,3 +36,5 @@ def print_results(report: Dict) -> None:
     print("PASS: " + str(report["counter"]["PASS"]))
     print("FAIL: " + str(report["counter"]["FAIL"]))
     print("ERROR: " + str(report["counter"]["ERROR"]))
+    print()
+    print("TOTAL: " + str(report["counter"]["TOTAL"]))

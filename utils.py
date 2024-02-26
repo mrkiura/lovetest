@@ -42,7 +42,7 @@ def ast_to_func(node: ast.FunctionDef):
     return context[node.name]
 
 
-def get_source(filename: str) -> str:
-    with open(filename, "r") as file:
+def get_source(file_name: str) -> str:
+    with open(file_name, "r") as file:
         source = file.read()
     return source

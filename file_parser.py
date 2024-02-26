@@ -5,13 +5,13 @@ from utils import get_source
 
 
 def parse_files(
-    filename: str,
+    file_name: str,
     source: tp.Optional[str] = None,
 ) -> tp.Tuple[tp.Sequence[str], tp.Sequence[ast.AST]]:
     """
     Parse test function names from a given source file or string.
 
-    Reads the source code from the provided filename or directly from the given source string,
+    Reads the source code from the provided file_name or directly from the given source string,
     parses the AST (Abstract Syntax Tree), and extracts the names of all functions that start with "test".
 
     It returns a tuple containing a list of function names and a list of AST nodes corresponding to the body of the module.
@@ -26,7 +26,7 @@ def parse_files(
 
     To parse test function names from a string containing source code:
 
-        >>> function_names, _ = parse_files(source="def test_function(): assert True", filename="test.py")
+        >>> function_names, _ = parse_files(source="def test_function(): assert True", file_name="test.py")
         >>> function_names
         ['test_function']
 
@@ -38,10 +38,11 @@ def parse_files(
     function_names: list = []
     try:
         if not source:
-            source = get_source(filename)
+            source = get_source(file_name)
     except FileNotFoundError:
         raise
-    tree = ast.parse(source, filename=filename)
+
+    tree = ast.parse(source, filename=file_name)
 
     for node in ast.walk(tree):
         match node:
@@ -51,7 +52,7 @@ def parse_files(
     return function_names, tree.body
 
 
-def find_functions_in_file(test_file_name: str) -> tp.List[tp.Callable]:
+def find_functions_in_file(test_file_name: str) -> tp.Dict[str, dict]:
     """
     Get the function objects from the test file and return them as a list.
     Args:
@@ -64,17 +65,26 @@ def find_functions_in_file(test_file_name: str) -> tp.List[tp.Callable]:
 
     global_context = {}
 
-    function_names, nodes = parse_files(source=source, filename=test_file_name)
+    function_names, nodes = parse_files(source=source, file_name=test_file_name)
 
     module = ast.Module(body=nodes)
     code = compile(source=module, filename=test_file_name, mode="exec")
     exec(code, global_context)
 
-    func_objects = [global_context[func_name] for func_name in function_names]
+    func_objects = {
+        func_name: {"callable": global_context[func_name], "file_name": test_file_name}
+        for func_name in function_names
+    }
 
     return func_objects
 
 
-def find_functions_in_files(filenames: tp.List[str]) -> tp.Dict[str, list]:
-    modules = {file_name: find_functions_in_file(file_name) for file_name in filenames}
-    return modules
+def find_functions_in_files(
+    file_names: tp.List[str], functions=None, skip_functions=None
+) -> tp.Dict[str, list]:
+    func_index = {}
+    for file_name in file_names:
+        func_objects = find_functions_in_file(file_name)
+        func_index.update(func_objects)
+    # modules = {file_name: find_functions_in_file(file_name) for file_name in file_names}
+    return func_index
