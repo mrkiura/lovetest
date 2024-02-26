@@ -1,6 +1,7 @@
 import ast
 import traceback
 
+from pprint import pprint
 from collections import defaultdict
 from typing import Counter, Callable, List
 
@@ -46,16 +47,17 @@ def run_tests(modules):
             function_name = callable.__name__
             try:
                 callable()
-            except AssertionError:
-                tb_str = traceback.format_exc()
+            except AssertionError as e:
+                tbs = traceback.format_exception(type(e), e, e.__traceback__)
+                del tbs[1]
+                tb_str = "".join(tbs)
                 results[file_name][function_name] = "FAIL"
                 failures[file_name][function_name] = tb_str
                 counter["FAIL"] += 1
             except Exception as e:
-                tb_str = "".join(
-                    traceback.format_exception(type(e), e, e.__traceback__)
-                )
-                tb_str = tb_str[tb_str.find("\n") + 1 :]
+                tbs = traceback.format_exception(type(e), e, e.__traceback__)
+                del tbs[1]
+                tb_str = "".join(tbs)
                 results[file_name][function_name] = "ERROR"
                 errors[file_name][function_name] = tb_str
                 counter["ERROR"] += 1
