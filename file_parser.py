@@ -80,7 +80,7 @@ def find_functions_in_file(test_file_name: str) -> tp.Dict[str, dict]:
 
 
 def find_functions_in_files(
-    file_names: tp.List[str], functions=None, ignore_functions=None
+    file_names: tp.List[str], functions=None, ignore=None
 ) -> dict:
     func_index, filtered_index = {}, {}
     for file_name in file_names:
@@ -95,8 +95,8 @@ def find_functions_in_files(
     else:
         filtered_index = func_index
 
-    if ignore_functions:
-        for skip_function in ignore_functions:
+    if ignore:
+        for skip_function in ignore:
             if skip_function in func_index:
                 func_index.pop(skip_function)
 

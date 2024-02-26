@@ -29,6 +29,6 @@ if __name__ == "__main__":
     skip_functions = args.skip_functions
 
     verified_files = find_test_files(files=files, ignore=skip_files)
-    function_index = find_functions_in_files(file_names=verified_files, functions=functions, ignore_functions=skip_functions)
+    function_index = find_functions_in_files(file_names=verified_files, functions=functions, ignore=skip_functions)
     report = run_tests(function_index)
     print_results(report)
