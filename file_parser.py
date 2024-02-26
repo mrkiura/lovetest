@@ -80,11 +80,25 @@ def find_functions_in_file(test_file_name: str) -> tp.Dict[str, dict]:
 
 
 def find_functions_in_files(
-    file_names: tp.List[str], functions=None, skip_functions=None
-) -> tp.Dict[str, list]:
-    func_index = {}
+    file_names: tp.List[str], functions=None, ignore_functions=None
+) -> dict:
+    func_index, filtered_index = {}, {}
     for file_name in file_names:
         func_objects = find_functions_in_file(file_name)
         func_index.update(func_objects)
-    # modules = {file_name: find_functions_in_file(file_name) for file_name in file_names}
-    return func_index
+
+
+    if functions:
+        for function in functions:
+            if (func_mapping := func_index.get(function)):
+                filtered_index[function] = func_mapping
+    else:
+        filtered_index = func_index
+
+    if ignore_functions:
+        for skip_function in ignore_functions:
+            if skip_function in func_index:
+                func_index.pop(skip_function)
+
+
+    return filtered_index

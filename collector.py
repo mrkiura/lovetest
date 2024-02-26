@@ -4,7 +4,7 @@ import ast
 from typing import List, Dict
 
 
-def find_test_files(*files, ignore=None) -> List[str]:
+def find_test_files(files=None, ignore=None) -> List[str]:
     """
     Find test files in the project directory.
 

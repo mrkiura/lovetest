@@ -24,17 +24,17 @@ def print_results(report: Dict) -> None:
             print(
                 f"\nERROR: {test_name}\n----------------------------------------------------------------------"
             )
-            print(f"{error_message}\n")
+            print(f"{error_message}")
 
         for test_name, error_message in report["failures"][file_name].items():
             print(
                 f"\nFAIL: {test_name}\n----------------------------------------------------------------------"
             )
-            print(f"{error_message}\n")
-
+            print(f"{error_message}")
     print()
-    print("PASS: " + str(report["counter"]["PASS"]))
-    print("FAIL: " + str(report["counter"]["FAIL"]))
-    print("ERROR: " + str(report["counter"]["ERROR"]))
+    print(f"Ran {report["counter"]["TOTAL"]} tests")
     print()
-    print("TOTAL: " + str(report["counter"]["TOTAL"]))
+    print(f"PASS: {report["counter"]["PASS"]}")
+    print(f"FAIL: {report["counter"]["FAIL"]}")
+    print(f"ERROR: {report["counter"]["ERROR"]}")
+    print()

@@ -23,29 +23,12 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    match args.__dict__:
-        case {"files": list(files)} if len(files) > 0:
-            verified_files = find_test_files(*files)
-            modules = find_functions_in_files(verified_files)
-            report = run_tests(modules)
-            print_results(report)
+    files = args.files
+    skip_files = args.skip_files
+    functions = args.functions
+    skip_functions = args.skip_functions
 
-        case {"skip_files": list(files)} if len(files) > 0:
-            verified_files = find_test_files(ignore=files)
-            modules = find_functions_in_files(verified_files)
-            report = run_tests(modules)
-            print_results(report)
-        case {"functions": list(functions)} if len(functions) > 0:
-            verified_files = find_test_files()
-            report = run_tests(verified_files, functions=functions)
-            print_results(report)
-        case {"skip_functions": list(functions)} if len(functions) > 0:
-            verified_files = find_test_files()
-            modules = find_functions_in_files(verified_files)
-            report = run_tests(modules)
-            print_results(report)
-        case _:  # default, run all tests.
-            verified_files = find_test_files()
-            modules = find_functions_in_files(verified_files)
-            report = run_tests(modules)
-            print_results(report)
+    verified_files = find_test_files(files=files, ignore=skip_files)
+    function_index = find_functions_in_files(file_names=verified_files, functions=functions, ignore_functions=skip_functions)
+    report = run_tests(function_index)
+    print_results(report)
