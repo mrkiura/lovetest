@@ -1,7 +1,6 @@
 import ast
 import traceback
 
-from pprint import pprint
 from collections import defaultdict
 from typing import Counter, Callable, List
 
