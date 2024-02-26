@@ -49,7 +49,3 @@ def find_test_files(*files, ignore=None) -> List[str]:
         raise FileNotFoundError("No files matched any of the given patterns.")
 
     return test_files
-
-
-
-

@@ -9,7 +9,7 @@ def print_results(report: Dict) -> None:
         return
     print("Running Tests...\n")
 
-    for file_name,  file_results in report["results"].items():
+    for file_name, file_results in report["results"].items():
         print("\n" + "=" * 70)
         print(f"{file_name}")
         print("=" * 70)
@@ -34,7 +34,7 @@ def print_results(report: Dict) -> None:
             )
             print(f"{error_message}\n")
 
+    print()
     print("PASS: " + str(report["counter"]["PASS"]))
     print("FAIL: " + str(report["counter"]["FAIL"]))
     print("ERROR: " + str(report["counter"]["ERROR"]))
-

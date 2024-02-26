@@ -1,4 +1,3 @@
-from collections import Counter
 import io
 import sys
 
@@ -6,7 +5,6 @@ from reporter import print_results
 from unittest.mock import mock_open, patch
 from file_parser import find_functions_in_files
 from runner import run_tests
-from utils import transform
 
 
 def capture_print_output(func, *args, **kwargs):
