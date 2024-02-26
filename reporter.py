@@ -38,26 +38,3 @@ def print_results(report: Dict) -> None:
     print("FAIL: " + str(report["counter"]["FAIL"]))
     print("ERROR: " + str(report["counter"]["ERROR"]))
 
-
-# Sample results:
-
-results = {
-    "results": {
-        "test_parse_tests_with_source_string": "PASS",
-        "test_parse_tests_from_file": "PASS",
-        "test_parse_tests_file_not_found_raises": "PASS",
-    },
-    "errors": {},
-    "counter": Counter(
-        {"PASS": 6, "ELAPSED": 0.0011527538299560547, "ERROR": 0, "FAIL": 0}
-    ),
-    "failures": {},
-}
-
-expected_results = {
-    "tests/test_parser.py": {
-            "test_parse_tests_with_source_string": {"result": "PASS"},
-            "test_parse_tests_from_file": {"result": "PASS"},
-            "test_parse_tests_file_not_found_raises": {"result": "FAIL"},
-        },
-}
