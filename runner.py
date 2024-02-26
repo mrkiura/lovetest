@@ -1,38 +1,10 @@
-import ast
 import traceback
 
+from collections import Counter
 from collections import defaultdict
-from typing import Counter, Callable, List
-
-from file_parser import parse_files
 
 
-def find_functions(test_file_name: str, functions=None) -> List[Callable]:
-    """
-    Get the function objects from the test file and return them as a dictionary.
-    Args:
-        test_file_name (str): The name of the test file.
-        functions (Optional): Optional argument for functions. Defaults to None.
-    Returns:
-        func_objects (Dict[str, object]): A dictionary containing function names and function objects.
-    """
-    with open(test_file_name, "r") as test_file:
-        source = test_file.read()
-
-    global_context = {}
-
-    function_names, nodes = parse_files(source=source, filename=test_file_name)
-
-    module = ast.Module(body=nodes)
-    code = compile(source=module, filename=test_file_name, mode="exec")
-    exec(code, global_context)
-
-    func_objects = [global_context[func_name] for func_name in function_names]
-
-    return func_objects
-
-
-def run_tests(modules):
+def run_tests(modules: dict):
     """Execute the functions in every file from modules and report."""
 
     results = defaultdict(dict)
