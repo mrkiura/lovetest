@@ -6,6 +6,7 @@ from reporter import print_results
 from unittest.mock import mock_open, patch
 from file_parser import find_functions_in_files
 from runner import run_tests
+from utils import transform
 
 
 def capture_print_output(func, *args, **kwargs):
@@ -83,10 +84,3 @@ def test_error():
         assert "test_error ... ERROR" in result
         assert "ERROR: test_error" in result
         assert "FAIL: test_fail" in result
-
-def test_stress():
-    raise Exception()
-
-
-def test_stress222():
-    raise AssertionError()

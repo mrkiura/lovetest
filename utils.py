@@ -48,4 +48,3 @@ def get_source(filename: str) -> str:
     with open(filename, "r") as file:
         source = file.read()
     return source
-
