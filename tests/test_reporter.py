@@ -83,14 +83,18 @@ def test_error():
         assert "ERROR: test_error" in result
         assert "FAIL: test_fail" in result
 
+
 def test_trouble():
     raise Exception()
+
 
 def test_trouble1():
     raise Exception()
 
+
 def test_trouble2():
     raise Exception()
+
 
 def test_trouble3():
     raise AssertionError()

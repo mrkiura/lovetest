@@ -87,10 +87,9 @@ def find_functions_in_files(
         func_objects = find_functions_in_file(file_name)
         func_index.update(func_objects)
 
-
     if functions:
         for function in functions:
-            if (func_mapping := func_index.get(function)):
+            if func_mapping := func_index.get(function):
                 filtered_index[function] = func_mapping
     else:
         filtered_index = func_index
@@ -99,6 +98,5 @@ def find_functions_in_files(
         for skip_function in ignore:
             if skip_function in func_index:
                 func_index.pop(skip_function)
-
 
     return filtered_index
