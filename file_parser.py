@@ -82,21 +82,21 @@ def find_functions_in_file(test_file_name: str) -> tp.Dict[str, dict]:
 def find_functions_in_files(
     file_names: tp.List[str], functions=None, ignore=None
 ) -> dict:
-    func_index, filtered_index = {}, {}
+    global_index, filtered_index = {}, {}
     for file_name in file_names:
         func_objects = find_functions_in_file(file_name)
-        func_index.update(func_objects)
+        global_index.update(func_objects)
 
     if functions:
         for function in functions:
-            if func_mapping := func_index.get(function):
+            if (func_mapping := global_index.get(function)):
                 filtered_index[function] = func_mapping
     else:
-        filtered_index = func_index
+        filtered_index = global_index
 
     if ignore:
         for skip_function in ignore:
-            if skip_function in func_index:
-                func_index.pop(skip_function)
+            if skip_function in global_index:
+                filtered_index.pop(skip_function)
 
     return filtered_index
