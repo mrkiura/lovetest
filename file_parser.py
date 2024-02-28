@@ -87,15 +87,16 @@ def find_functions_in_files(
     """Fetch all functions for each file name.
 
     Args:
-        file_names (tp.List[str]): List of files to collect functions from
-        functions (tp.List[str], optional): If provided, only collect functions in this list.
-        ignore (tp.List[str], optional): If provided, do not collect any function on this list.
+        file_names (List[str]): List of files to collect functions from
+        functions (List[str], optional): If provided, only collect functions in this list.
+        ignore (List[str], optional): If provided, do not collect any function on this list.
 
     Returns:
         dict: A key value mapping where keys are function names and values are dicts with the keys callable and file name.
     """
-    func_objects_list = [find_functions_in_file(file_name) for file_name in file_names]
-    func_index = dict(ChainMap(*func_objects_list))
+    func_index = dict(
+        ChainMap(*[find_functions_in_file(file_name) for file_name in file_names])
+    )
 
     if functions:
         func_index = {
