@@ -1,6 +1,8 @@
 import ast
 
 import typing as tp
+
+from collections import ChainMap
 from utils import get_source
 
 
@@ -82,21 +84,28 @@ def find_functions_in_file(test_file_name: str) -> tp.Dict[str, dict]:
 def find_functions_in_files(
     file_names: tp.List[str], functions=None, ignore=None
 ) -> dict:
-    global_index, filtered_index = {}, {}
-    for file_name in file_names:
-        func_objects = find_functions_in_file(file_name)
-        global_index.update(func_objects)
+    """Fetch all functions for each file name.
+
+    Args:
+        file_names (tp.List[str]): List of files to collect functions from
+        functions (tp.List[str], optional): If provided, only collect functions in this list.
+        ignore (tp.List[str], optional): If provided, do not collect any function on this list.
+
+    Returns:
+        dict: A key value mapping where keys are function names and values are dicts with the keys callable and file name.
+    """
+    func_objects_list = [find_functions_in_file(file_name) for file_name in file_names]
+    func_index = dict(ChainMap(*func_objects_list))
 
     if functions:
-        for function in functions:
-            if (func_mapping := global_index.get(function)):
-                filtered_index[function] = func_mapping
-    else:
-        filtered_index = global_index
+        func_index = {
+            func_name: func_index[func_name]
+            for func_name in functions
+            if func_name in func_index
+        }
 
     if ignore:
-        for skip_function in ignore:
-            if skip_function in global_index:
-                filtered_index.pop(skip_function)
+        for func_name in ignore:
+            func_index.pop(func_name, None)
 
-    return filtered_index
+    return func_index
