@@ -1,64 +1,45 @@
-import ast
 import traceback
-from typing import Tuple, Counter, List
-from file_parser import parse_tests
-import time
+
+from collections import Counter
+from collections import defaultdict
 
 
-def run_test_file(test_file_name: str) -> Tuple[dict, Counter, dict]:
-    """Run the test functions defined in a file."""
-    with open(test_file_name, "r") as test_file:
-        source = test_file.read()
+def run_tests(function_index: dict):
+    """Execute the functions in every file from modules and report."""
 
-    global_context = {}
+    results = defaultdict(dict)
+    failures = defaultdict(dict)
+    errors = defaultdict(dict)
+    counter = Counter({key: 0 for key in ["PASS", "ERROR", "FAIL", "TOTAL"]})
+    counter["TOTAL"] += len(function_index)
 
-    function_names, nodes = parse_tests(source=source, filename=test_file_name)
-
-    module = ast.Module(body=nodes)
-    code = compile(source=module, filename=test_file_name, mode="exec")
-    exec(code, global_context)
-
-    return execute_functions(function_names, global_context)
-
-
-def run_test_files(test_file_names: list[str]) -> dict[str, Tuple[dict, Counter, dict]]:
-    """Run the test files provided and return a report as a dict."""
-    return {
-        test_file_name: run_test_file(test_file_name)
-        for test_file_name in test_file_names
-    }
-
-
-def execute_functions(
-    function_names: List[str], execution_context: dict
-) -> Tuple[dict, Counter, dict, dict]:
-    results = {}
-    counter = Counter()
-    errors = {}
-    failures = {}
-
-    for function in function_names:
+    for function_name, function in function_index.items():
+        callable = function["callable"]
+        file_name = function["file_name"]
+        function_name = callable.__name__
         try:
-            start_time = time.time()
-            exec(f"{function}()", execution_context)
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            results[function] = "PASS"
-            counter["PASS"] += 1
-        except AssertionError:
-            error_message = traceback.format_exc()
-            results[function] = "FAIL"
+            callable()
+        except AssertionError as e:
+            tbs = traceback.format_exception(type(e), e, e.__traceback__)
+            del tbs[1]
+            tb_str = "".join(tbs)
+            results[file_name][function_name] = "FAIL"
+            failures[file_name][function_name] = tb_str
             counter["FAIL"] += 1
-            failures[function] = error_message
-        except Exception:
-            error_message = traceback.format_exc()
-            results[function] = f"ERROR: {error_message}"
-            errors[function] = error_message
+        except Exception as e:
+            tbs = traceback.format_exception(type(e), e, e.__traceback__)
+            del tbs[1]
+            tb_str = "".join(tbs)
+            results[file_name][function_name] = "ERROR"
+            errors[file_name][function_name] = tb_str
             counter["ERROR"] += 1
+        else:
+            counter["PASS"] += 1
+            results[file_name][function_name] = "PASS"
 
-        finally:
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            counter["ELAPSED"] += elapsed_time
-
-    return results, counter, errors, failures
+    return {
+        "results": results,
+        "counter": counter,
+        "errors": errors,
+        "failures": failures,
+    }

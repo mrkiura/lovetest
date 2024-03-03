@@ -1,21 +1,18 @@
-from collections import Counter
 from typing import Dict
 
 
 def print_results(report: Dict) -> None:
-    print("Test results.\n")
+    if not report:
+        print("Ran 0 tests")
+        return
+    print("Running Tests...\n")
 
-    summary = Counter()
-    for test_file, (results, counter, errors, failures) in report.items():
+    for file_name, file_results in report["results"].items():
         print("\n" + "=" * 70)
-        print(f"{test_file}")
+        print(f"{file_name}")
         print("=" * 70)
-        summary["PASS"] += counter["PASS"]
-        summary["FAIL"] += counter["FAIL"]
-        summary["ERROR"] += counter["ERROR"]
-        summary["ELAPSED"] += counter["ELAPSED"]
-        for test_name, test_result in results.items():
-            summary["COUNT"] += 1
+
+        for test_name, test_result in file_results.items():
             if "FAIL" in test_result:
                 print(f"{test_name} ... FAIL")
             elif "ERROR" in test_result:
@@ -23,19 +20,21 @@ def print_results(report: Dict) -> None:
             elif "PASS" in test_result:
                 print(f"{test_name} ... OK")
 
-        for test_name, error_message in errors.items():
+        for test_name, error_message in report["errors"][file_name].items():
             print(
-                f"ERROR: {test_name}\n----------------------------------------------------------------------"
+                f"\nERROR: {test_name}\n----------------------------------------------------------------------"
             )
-            print(f"{error_message}\n")
+            print(f"{error_message}")
 
-        for test_name, error_message in failures.items():
+        for test_name, error_message in report["failures"][file_name].items():
             print(
-                f"FAIL: {test_name}\n----------------------------------------------------------------------"
+                f"\nFAIL: {test_name}\n----------------------------------------------------------------------"
             )
-            print(f"{error_message}\n")
-
-    print(f"\nRan {summary['COUNT']} tests\n")
-    print("PASS (pass=" + str(summary["PASS"]) + ")")
-    print("FAIL (fail=" + str(summary["FAIL"]) + ")")
-    print("ERROR (error=" + str(summary["ERROR"]) + ")")
+            print(f"{error_message}")
+    print()
+    print(f"Ran {report["counter"]["TOTAL"]} tests")
+    print()
+    print(f"PASS: {report["counter"]["PASS"]}")
+    print(f"FAIL: {report["counter"]["FAIL"]}")
+    print(f"ERROR: {report["counter"]["ERROR"]}")
+    print()

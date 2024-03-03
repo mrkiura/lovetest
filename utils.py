@@ -1,3 +1,6 @@
+import ast
+
+
 class assert_raises:
     """
     A context manager to assert that a specific exception is raised.
@@ -23,3 +26,23 @@ class assert_raises:
     def __exit__(self, exc_type, exc_value, exc_tb):
         assert exc_type == self.exception_type, "No expected Exceptions raised."
         return True
+
+
+def ast_to_func(node: ast.FunctionDef):
+    """
+    Convert an ast.FunctionDef object to a code object.
+    """
+    node = ast.fix_missing_locations(node)
+
+    module = ast.Module(body=[node], type_ignores=[])
+    code_obj = compile(module, node.name, "exec")
+
+    context = {}
+    exec(code_obj, context)
+    return context[node.name]
+
+
+def get_source(file_name: str) -> str:
+    with open(file_name, "r") as file:
+        source = file.read()
+    return source

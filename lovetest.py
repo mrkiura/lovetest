@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 from collector import find_test_files
-from runner import run_test_files
+from runner import run_tests
+from file_parser import find_functions_in_files
 from reporter import print_results
 
 
@@ -23,23 +23,14 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    match args.__dict__:
-        case {"files": list(files)} if len(files) > 0:
-            verified_files = find_test_files(*files)
-            report = run_test_files(verified_files)
-            print_results(report)
+    files = args.files
+    skip_files = args.skip_files
+    functions = args.functions
+    skip_functions = args.skip_functions
 
-        case {"skip_files": list(files)} if len(files) > 0:
-            verified_files = find_test_files(ignore=files)
-            report = run_test_files(verified_files)
-            print_results(report)
-        case {"functions": list(functions)} if len(functions) > 0:
-            print(f"functions {functions}")
-            functions = []
-
-        case {"skip_functions": list(functions)} if len(functions) > 0:
-            print(f"functions {functions}")
-        case _:  # default, run all tests.
-            verified_files = find_test_files()
-            report = run_test_files(verified_files)
-            print_results(report)
+    verified_files = find_test_files(files=files, ignore=skip_files)
+    function_index = find_functions_in_files(
+        file_names=verified_files, functions=functions, ignore=skip_functions
+    )
+    report = run_tests(function_index)
+    print_results(report)
